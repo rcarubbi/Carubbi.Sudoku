@@ -1,0 +1,5 @@
+F:\bkp\C#\Projects\Carubbi.Sudoku\Carubbi.Sudoku\Carubbi.Sudoku.Solver\bin\Debug\Carubbi.Sudoku.Solver.dll
+F:\bkp\C#\Projects\Carubbi.Sudoku\Carubbi.Sudoku\Carubbi.Sudoku.Solver\bin\Debug\Carubbi.Sudoku.Solver.pdb
+F:\bkp\C#\Projects\Carubbi.Sudoku\Carubbi.Sudoku\Carubbi.Sudoku.Solver\obj\Debug\ResolveAssemblyReference.cache
+F:\bkp\C#\Projects\Carubbi.Sudoku\Carubbi.Sudoku\Carubbi.Sudoku.Solver\obj\Debug\Carubbi.Sudoku.Solver.dll
+F:\bkp\C#\Projects\Carubbi.Sudoku\Carubbi.Sudoku\Carubbi.Sudoku.Solver\obj\Debug\Carubbi.Sudoku.Solver.pdb

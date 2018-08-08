@@ -1,7 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carubbi.Sudoku.UI", "Carubbi.Sudoku\Carubbi.Sudoku.UI.csproj", "{0E2EAAB9-E6E8-4C93-848F-A6F0333FF31F}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carubbi.Sudoku.UI", "Carubbi.Sudoku.UI\Carubbi.Sudoku.UI.csproj", "{0E2EAAB9-E6E8-4C93-848F-A6F0333FF31F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carubbi.Sudoku.Solver", "Carubbi.Sudoku.Solver\Carubbi.Sudoku.Solver.csproj", "{68B3A168-8B06-4E0A-AAC4-FEAF8BA5E143}"
 EndProject
@@ -22,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AA2D4925-2207-4F3C-9453-A1A86CCBFF6F}
 	EndGlobalSection
 EndGlobal

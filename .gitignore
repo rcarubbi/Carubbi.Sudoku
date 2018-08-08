@@ -3,3 +3,6 @@
 ################################################################################
 
 /.vs/Carubbi.Sudoku/DesignTimeBuild
+/.vs/Carubbi.Sudoku/v15/Server/sqlite3
+/.vs
+/Carubbi.Sudoku.UI/sudoku.txt2

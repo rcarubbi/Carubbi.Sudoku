@@ -54,12 +54,15 @@
     <Compile Include="Matrix\Cell.cs" />
     <Compile Include="Matrix\CoordHelper.cs" />
     <Compile Include="Matrix\Matrix.cs" />
+    <Compile Include="Matrix\MatrixComparer.cs" />
     <Compile Include="Matrix\Section.cs" />
     <Compile Include="Matrix\SectionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Solvers\RecursiveSolver.cs" />
+    <Compile Include="Solvers\SolutionEventArgs.cs" />
     <Compile Include="Solvers\SolverNode.cs" />
     <Compile Include="Solvers\SolverTree.cs" />
+    <Compile Include="Solvers\ValueChangedEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

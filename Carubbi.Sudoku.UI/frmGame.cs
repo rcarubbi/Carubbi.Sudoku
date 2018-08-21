@@ -1,56 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Collections.Specialized;
 using System.Drawing;
-using System.Linq;
-using System.Text;
+using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using Carubbi.Sudoku.Solver;
-using System.IO;
-using System.Collections.Specialized;
-using System.Threading;
+
 namespace Carubbi.Sudoku.UI
 {
-    public partial class frmGame : Form
+    public partial class FrmGame : Form
     {
-        public frmGame()
-        {
-            InitializeComponent();
-        }
+        private int _animationSeconds;
+
+        private List<Matrix> _solutions;
+
+        private int _iSolution = 1;
+
+        private readonly List<FrmGame> _results = new List<FrmGame>();
 
         private void btnExit_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void ClearResults()
         {
-            solutions = null;
+            _solutions = null;
             lstResults.Items.Clear();
-            foreach (frmGame result in Results)
+            foreach (var result in _results)
                 result.Close();
         }
 
-        private int GenerateNumberGame(int maxNumber)
+        private static int GenerateNumberGame(int maxNumber)
         {
-            Random rnd = new Random();
-            int gameNumber = rnd.Next(0, maxNumber);
+            var rnd = new Random();
+            var gameNumber = rnd.Next(0, maxNumber);
             while (gameNumber % 9 != 0)
                 gameNumber = rnd.Next(0, maxNumber);
             return gameNumber;
         }
 
-        private Matrix NewGame(int numberGame, StringCollection gameData)
+        private static Matrix NewGame(int numberGame, StringCollection gameData)
         {
-            Matrix newGame = new Matrix();
-            int row = 1;
-            int column = 1;
-            for (int line = numberGame; line <= numberGame + 8; line++)
+            var newGame = new Matrix();
+            var row = 1;
+            for (var line = numberGame; line <= numberGame + 8; line++)
             {
-                char[] digits = gameData[line].ToCharArray();
-                column = 1;
-                foreach (char digit in digits)
+                var digits = gameData[line].ToCharArray();
+                var column = 1;
+                foreach (var digit in digits)
                 {
                     if (Convert.ToInt32(digit.ToString()) > 0)
                         newGame.LoadValue(new Point(row, column), Convert.ToInt32(digit.ToString()));
@@ -63,10 +62,10 @@ namespace Carubbi.Sudoku.UI
 
         private StringCollection ReadFile()
         {
-            FileStream fs = new FileStream(@"sudoku.txt", FileMode.Open, FileAccess.Read);
-            StreamReader sr = new StreamReader(fs);
-            StringCollection sc = new StringCollection();
-            string s = string.Empty;
+            var fs = new FileStream(@"sudoku.txt", FileMode.Open, FileAccess.Read);
+            var sr = new StreamReader(fs);
+            var sc = new StringCollection();
+            var s = string.Empty;
             while ((s = sr.ReadLine()) != null)
             {
                 if (s.Trim() != string.Empty)
@@ -79,208 +78,183 @@ namespace Carubbi.Sudoku.UI
             return sc;
         }
 
-        private void btnNew_Click(object sender, EventArgs e)
-        {
-            ClearResults();
-            ClearCells();
-            
-            StringCollection dataRows = ReadFile();
-            int numberGame = GenerateNumberGame(dataRows.Count);
-            this.Text = string.Format("Carubbi's Sudoku 1.0 Game #{0}", (numberGame / 9) + 1);
-
-            ShowResult(NewGame(numberGame, dataRows), this, false);
-        }
-
         private void ClearCells()
         {
-            foreach (Control pnlQuadrant in this.Controls)
+            foreach (Control pnlQuadrant in Controls)
             {
-                if (pnlQuadrant.GetType() == typeof(Panel))
+                if (pnlQuadrant.GetType() != typeof(Panel)) continue;
+                if (pnlQuadrant.Name == "pnlControls" || pnlQuadrant.Name == "pnlResults") continue;
+                foreach (TextBox txtCell in pnlQuadrant.Controls)
                 {
-                    if (pnlQuadrant.Name != "pnlControls" && pnlQuadrant.Name != "pnlResults")
-                    {
-                        foreach (TextBox txtCell in pnlQuadrant.Controls)
-                        {
-                            txtCell.Text = string.Empty;
-                            txtCell.ForeColor = Color.Black;
-                            txtCell.Font = new Font(txtCell.Font, FontStyle.Regular);
-                        }
-                    }
+                    txtCell.Text = string.Empty;
+                    txtCell.ForeColor = Color.Black;
+                    txtCell.Font = new Font(txtCell.Font, FontStyle.Regular);
                 }
             }
         }
 
-        private int _animationSeconds;
-
-        private List<Matrix> solutions;
-        private int iSolution = 1;
-        private void btnSolve_Click(object sender, EventArgs e)
-        {
-            iSolution = 1;
-            ClearResults();
-            Solver.RecursiveSolver solver = new Solver.RecursiveSolver(LoadMatrix());
-            _animationSeconds = Convert.ToInt32(txtAnimationSeconds.Value) * 10;
-            solver.ValueAdded += new EventHandler<ValueChangedEventArgs>(solver_ValueAdded);
-            solver.ValueRemoved += new EventHandler<ValueChangedEventArgs>(solver_ValueRemoved);
-            solver.SolutionFound += new EventHandler<SolutionEventArgs>(solver_SolutionFound);
-            solutions = solver.Solve(ReadNumberOfSolutions());
-
-            MessageBox.Show(string.Format("{0} Resultado(s) Valido(s)", solutions.Count), "Sudoku", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        void solver_SolutionFound(object sender, SolutionEventArgs e)
-        {
-            e.Solution.Number = string.Format("Matrix #{0}", iSolution++);
-            lstResults.Items.Add(e.Solution);
-            lstResults.SetSelected(lstResults.Items.Count - 1, true);
-            lstResults.SetSelected(lstResults.Items.Count - 1, false);
-
-            
-        }
-
-        void solver_ValueRemoved(object sender, ValueChangedEventArgs e)
+        private void solver_ValueRemoved(object sender, ValueChangedEventArgs e)
         {
             _animationSeconds = Convert.ToInt32(txtAnimationSeconds.Value) * 10;
             ShowResult(e.State, this, true);
         }
 
-        void solver_ValueAdded(object sender, ValueChangedEventArgs e)
+        private void solver_ValueAdded(object sender, ValueChangedEventArgs e)
         {
             _animationSeconds = Convert.ToInt32(txtAnimationSeconds.Value) * 10;
             ShowResult(e.State, this, true);
         }
 
-
-        private List<frmGame> Results = new List<frmGame>();
-
-
-        private void ShowResults(List<Matrix> results)
+        private void ShowResults(IEnumerable<Matrix> results)
         {
-            foreach (Matrix result in results)
+            foreach (var result in results)
             {
                 try
                 {
-                    frmGame visualizer = new frmGame();
-                    visualizer.pnlControls.Visible = false;
-                    visualizer.pnlResults.Visible = false;
-                    visualizer.Width = 491;
-                    visualizer.btnFechar.Visible = true;
-                    Results.Add(visualizer);
+                    var visualizer = new FrmGame
+                    {
+                        pnlControls = { Visible = false },
+                        pnlResults = { Visible = false },
+                        Width = 491,
+                        btnFechar = { Visible = true }
+                    };
+                    _results.Add(visualizer);
                     ShowResult(result, visualizer, false);
                     visualizer.Show();
                 }
                 catch
                 {
-
+                    // ignored
                 }
             }
         }
 
-        private void ShowResult(Matrix result, frmGame visualizer, bool showAnimation)
+        private void ShowResult(Matrix result, FrmGame visualizer, bool showAnimation)
         {
             foreach (Control pnlQuadrant in visualizer.Controls)
             {
-                if (pnlQuadrant.GetType() == typeof(Panel))
+                if (pnlQuadrant.GetType() != typeof(Panel)) continue;
+                if (pnlQuadrant.Name == "pnlControls" || pnlQuadrant.Name == "pnlResults") continue;
+                foreach (TextBox txtCell in pnlQuadrant.Controls)
                 {
-                    if (pnlQuadrant.Name != "pnlControls" && pnlQuadrant.Name != "pnlResults")
+                    var strCoords = txtCell.Tag.ToString().Split(';');
+                    var coordinates = new Point(Convert.ToInt32(strCoords[0]), Convert.ToInt32(strCoords[1]));
+                    if (result.Rows[coordinates.X - 1].Cells[coordinates.Y - 1].Value > 0)
                     {
-                        foreach (TextBox txtCell in pnlQuadrant.Controls)
-                        {
-                            string[] strCoords = txtCell.Tag.ToString().Split(';');
-                            Point coordinates = new Point(Convert.ToInt32(strCoords[0]), Convert.ToInt32(strCoords[1]));
-                            if (result.Rows[coordinates.X - 1].Cells[coordinates.Y - 1].Value > 0)
-                            {
-                                if (txtCell.Text != result.Rows[coordinates.X - 1].Cells[coordinates.Y - 1].Value.ToString())
-                                {
-                                    if (showAnimation)
-                                    {
-                                        txtCell.ForeColor = Color.Blue;
-                                        txtCell.Font = new Font(txtCell.Font, FontStyle.Bold);
-                                    }
-                                    txtCell.Text = result.Rows[coordinates.X - 1].Cells[coordinates.Y - 1].Value.ToString();
-                                    if (showAnimation)
-                                    {
-                                        Application.DoEvents();
-                                        Thread.Sleep(_animationSeconds);
-                                    }
-                                }
+                        if (txtCell.Text == result.Rows[coordinates.X - 1].Cells[coordinates.Y - 1].Value.ToString())
+                            continue;
 
-                            }
-                            else
-                            {
-                                if (!string.IsNullOrEmpty(txtCell.Text))
-                                {
-                                    if (showAnimation)
-                                    {
-                                        txtCell.ForeColor = Color.Red;
-                                        txtCell.Font = new Font(txtCell.Font, FontStyle.Bold);
-                                        Application.DoEvents();
-                                        Thread.Sleep(_animationSeconds);
-                                    }
-                                    txtCell.Text = string.Empty;
-                                }
-                            }
+                        if (showAnimation)
+                        {
+                            txtCell.ForeColor = Color.Blue;
+                            txtCell.Font = new Font(txtCell.Font, FontStyle.Bold);
                         }
+
+                        txtCell.Text = result.Rows[coordinates.X - 1].Cells[coordinates.Y - 1].Value.ToString();
+
+                        if (!showAnimation) continue;
+                        Application.DoEvents();
+                        Thread.Sleep(_animationSeconds);
+
+                    }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(txtCell.Text)) continue;
+
+                        if (showAnimation)
+                        {
+                            txtCell.ForeColor = Color.Red;
+                            txtCell.Font = new Font(txtCell.Font, FontStyle.Bold);
+                            Application.DoEvents();
+                            Thread.Sleep(_animationSeconds);
+                        }
+
+                        txtCell.Text = string.Empty;
                     }
                 }
             }
-        
+
         }
 
         private int ReadNumberOfSolutions()
         {
-            int numberOfSolutions = 1;
-            if (!String.IsNullOrEmpty(txtSolutionsNumber.Text))
+            var numberOfSolutions = 1;
+            if (!string.IsNullOrEmpty(txtSolutionsNumber.Text))
                 numberOfSolutions = Convert.ToInt32(txtSolutionsNumber.Text);
             return numberOfSolutions;
         }
 
-
         private Matrix LoadMatrix()
         {
-            Matrix mainMatrix = new Matrix();
-            foreach (Control pnlQuadrant in this.Controls)
+            var mainMatrix = new Matrix();
+            foreach (Control pnlQuadrant in Controls)
             {
-                if (pnlQuadrant.GetType() == typeof(Panel))
+                if (pnlQuadrant.GetType() != typeof(Panel)) continue;
+                if (pnlQuadrant.Name == "pnlControls" || pnlQuadrant.Name == "pnlResults") continue;
+                foreach (TextBox txtCell in pnlQuadrant.Controls)
                 {
-                    if (pnlQuadrant.Name != "pnlControls" && pnlQuadrant.Name != "pnlResults")
-                    {
-                        foreach (TextBox txtCell in pnlQuadrant.Controls)
-                        {
-                            if (!string.IsNullOrEmpty(txtCell.Text))
-                            {
-                                int value = Convert.ToInt32(txtCell.Text);
-                                string[] strCoords = txtCell.Tag.ToString().Split(';');
-                                Point coordinates = new Point(Convert.ToInt32(strCoords[0]), Convert.ToInt32(strCoords[1]));
-                                mainMatrix.LoadValue(coordinates, value);
-                            }
-                        }
-                    }
+                    if (string.IsNullOrEmpty(txtCell.Text)) continue;
+                    var value = Convert.ToInt32(txtCell.Text);
+                    var strCoords = txtCell.Tag.ToString().Split(';');
+                    var coordinates = new Point(Convert.ToInt32(strCoords[0]), Convert.ToInt32(strCoords[1]));
+                    mainMatrix.LoadValue(coordinates, value);
                 }
             }
             return mainMatrix;
         }
 
-        private void btnClear_Click(object sender, EventArgs e)
+        protected virtual void btnNew_Click(object sender, EventArgs e)
+        {
+            ClearResults();
+            ClearCells();
+
+            var dataRows = ReadFile();
+            var numberGame = GenerateNumberGame(dataRows.Count);
+            Text = $"Carubbi's Sudoku 1.0 Game #{(numberGame / 9) + 1}";
+
+            ShowResult(NewGame(numberGame, dataRows), this, false);
+        }
+
+        protected virtual void btnSolve_Click(object sender, EventArgs e)
+        {
+            _iSolution = 1;
+            ClearResults();
+            var solver = new RecursiveSolver(LoadMatrix());
+            _animationSeconds = Convert.ToInt32(txtAnimationSeconds.Value) * 10;
+            solver.ValueAdded += solver_ValueAdded;
+            solver.ValueRemoved += solver_ValueRemoved;
+            solver.SolutionFound += solver_SolutionFound;
+            _solutions = solver.Solve(ReadNumberOfSolutions());
+
+            MessageBox.Show($"{_solutions.Count} Resultado(s) Valido(s)", "Sudoku", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        protected virtual void solver_SolutionFound(object sender, SolutionEventArgs e)
+        {
+            e.Solution.Number = $"Matrix #{_iSolution++}";
+            lstResults.Items.Add(e.Solution);
+            lstResults.SetSelected(lstResults.Items.Count - 1, true);
+            lstResults.SetSelected(lstResults.Items.Count - 1, false);
+        }
+
+        protected virtual void btnClear_Click(object sender, EventArgs e)
         {
             ClearCells();
             ClearResults();
         }
 
-        private void btnAbrir_Click(object sender, EventArgs e)
+        protected virtual void btnAbrir_Click(object sender, EventArgs e)
         {
-            if (solutions != null)
+            if (_solutions != null)
             {
-                if (lstResults.SelectedIndex > -1)
-                {
-                    List<Matrix> results = new List<Matrix>();
+                if (lstResults.SelectedIndex <= -1) return;
+                var results = new List<Matrix>();
 
-                    foreach (int i in lstResults.SelectedIndices)
-                    {
-                        results.Add(solutions[i]);
-                    }
-                    ShowResults(results);
+                foreach (int i in lstResults.SelectedIndices)
+                {
+                    results.Add(_solutions[i]);
                 }
+                ShowResults(results);
             }
             else
             {
@@ -288,11 +262,14 @@ namespace Carubbi.Sudoku.UI
             }
         }
 
-        private void btnFechar_Click(object sender, EventArgs e)
+        protected virtual void btnFechar_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
-      
+        public FrmGame()
+        {
+            InitializeComponent();
+        }
     }
 }

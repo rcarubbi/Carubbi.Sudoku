@@ -1,13 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing;
 
 namespace Carubbi.Sudoku.Solver
 {
     public class Section : IDisposable
     {
+        private void CreateCells()
+        {
+            switch (Type)
+            {
+                case SectionType.Row:
+                    for (var cellIndex = 0; cellIndex < Cells.Capacity; cellIndex++)
+                        Cells.Add(new Cell(new Point(Number, cellIndex + 1)));
+                    break;
+                case SectionType.Column:
+                    for (var cellIndex = 0; cellIndex < Cells.Capacity; cellIndex++)
+                        Cells.Add(new Cell(new Point(cellIndex + 1, Number)));
+                    break;
+                case SectionType.Quadrant:
+                    var rowStart = CoordHelper.GetRowStartByQuadrant(Number);
+                    var columnStart = CoordHelper.GetColumnStartByQuadrant(Number);
+                    for (var rowIndex = rowStart; rowIndex <= rowStart + 2; rowIndex++)
+                    {
+                        for (var columnIndex = columnStart; columnIndex <= columnStart + 2; columnIndex++)
+                            Cells.Add(new Cell(new Point(rowIndex, columnIndex)));
+                    }
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         public Section(SectionType type, int number)
         {
             Type = type;
@@ -18,7 +43,7 @@ namespace Carubbi.Sudoku.Solver
 
         public Cell GetCellByCoordinates(Point coords)
         {
-            foreach (Cell cell in Cells)
+            foreach (var cell in Cells)
                 if (cell.Coordinates.X == coords.X && cell.Coordinates.Y == coords.Y)
                     return cell;
 
@@ -30,33 +55,6 @@ namespace Carubbi.Sudoku.Solver
             get;
             set;
         }
-
-        private void CreateCells()
-        {
-            switch (Type)
-            {
-                case SectionType.Row:
-                    for (int cellIndex = 0; cellIndex < Cells.Capacity; cellIndex++)
-                        Cells.Add(new Cell(new Point(Number, cellIndex+1)));
-                    break;
-                case SectionType.Column:
-                    for (int cellIndex = 0; cellIndex < Cells.Capacity; cellIndex++)
-                        Cells.Add(new Cell(new Point(cellIndex+1, Number)));
-                    break;
-                case SectionType.Quadrant:
-                    int rowStart = CoordHelper.GetRowStartByQuadrant(Number);
-                    int columnStart = CoordHelper.GetColumnStartByQuadrant(Number);
-                    for (int rowIndex = rowStart; rowIndex <= rowStart + 2; rowIndex++)
-                    {
-                        for (int columnIndex = columnStart; columnIndex <= columnStart + 2; columnIndex++)
-                            Cells.Add(new Cell(new Point(rowIndex, columnIndex)));
-                    }
-                    break;
-
-            }
-        }
-
-        
 
         public SectionType Type
         {
@@ -72,7 +70,7 @@ namespace Carubbi.Sudoku.Solver
 
         public void Dispose()
         {
-            foreach (Cell cell in Cells)
+            foreach (var cell in Cells)
                 cell.Dispose();
 
             Cells = null;

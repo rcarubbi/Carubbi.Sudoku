@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Carubbi.Sudoku.Solver
+﻿namespace Carubbi.Sudoku.Solver
 {
-    public enum SectionType : int
-	{
+    public enum SectionType
+    {
 	    Row,
         Column,
         Quadrant

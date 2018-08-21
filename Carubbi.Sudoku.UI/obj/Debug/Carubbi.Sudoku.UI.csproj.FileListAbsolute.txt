@@ -11,4 +11,3 @@ C:\Users\RaphaelCarubbi\source\repos\Carubbi.Sudoku\Carubbi.Sudoku.UI\obj\Debug\
 C:\Users\RaphaelCarubbi\source\repos\Carubbi.Sudoku\Carubbi.Sudoku.UI\obj\Debug\Carubbi.Sudoku.UI.csproj.CopyComplete
 C:\Users\RaphaelCarubbi\source\repos\Carubbi.Sudoku\Carubbi.Sudoku.UI\obj\Debug\Carubbi.Sudoku.exe
 C:\Users\RaphaelCarubbi\source\repos\Carubbi.Sudoku\Carubbi.Sudoku.UI\obj\Debug\Carubbi.Sudoku.pdb
-C:\Users\RaphaelCarubbi\source\repos\Carubbi.Sudoku\Carubbi.Sudoku.UI\bin\Debug\sudoku.txt2

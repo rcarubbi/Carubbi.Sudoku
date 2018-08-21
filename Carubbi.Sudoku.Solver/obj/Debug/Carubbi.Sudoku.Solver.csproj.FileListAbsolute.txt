@@ -1,6 +1,5 @@
 C:\Users\RaphaelCarubbi\source\repos\Carubbi.Sudoku\Carubbi.Sudoku.Solver\bin\Debug\Carubbi.Sudoku.Solver.dll
 C:\Users\RaphaelCarubbi\source\repos\Carubbi.Sudoku\Carubbi.Sudoku.Solver\bin\Debug\Carubbi.Sudoku.Solver.pdb
-C:\Users\RaphaelCarubbi\source\repos\Carubbi.Sudoku\Carubbi.Sudoku.Solver\obj\Debug\Carubbi.Sudoku.Solver.csprojAssemblyReference.cache
 C:\Users\RaphaelCarubbi\source\repos\Carubbi.Sudoku\Carubbi.Sudoku.Solver\obj\Debug\Carubbi.Sudoku.Solver.csproj.CoreCompileInputs.cache
 C:\Users\RaphaelCarubbi\source\repos\Carubbi.Sudoku\Carubbi.Sudoku.Solver\obj\Debug\Carubbi.Sudoku.Solver.dll
 C:\Users\RaphaelCarubbi\source\repos\Carubbi.Sudoku\Carubbi.Sudoku.Solver\obj\Debug\Carubbi.Sudoku.Solver.pdb
